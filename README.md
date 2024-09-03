@@ -1,3 +1,6 @@
 # CS609_Calendar
 CS609 Calendar team project
-Samuel Adewumi
+### Authors:
+Tim Sanford
+/ Anthony White
+/ Tommy
