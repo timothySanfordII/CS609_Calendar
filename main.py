@@ -29,3 +29,4 @@ def generate_calendar(year, month):
 
 # Example usage
 print(generate_calendar(2024, 9))
+
