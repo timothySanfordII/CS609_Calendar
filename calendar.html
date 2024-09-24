@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Event Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 50px;
+        }
+        .calendar-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 80%;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calendar-container">
+    <h2>Add Event to Calendar</h2>
+    <input type="text" id="event_name" placeholder="Event Name"><br>
+    <input type="text" id="event_day" placeholder="Day (DD)"><br>
+    <input type="text" id="event_month" placeholder="Month (MM)"><br>
+    <input type="text" id="event_year" placeholder="Year (YYYY)"><br>
+    <button onclick="addEvent()">Add Event</button>
+</div>
+
+<script>
+    function addEvent() {
+        const eventName = document.getElementById('event_name').value;
+        const eventDay = document.getElementById('event_day').value;
+        const eventMonth = document.getElementById('event_month').value;
+        const eventYear = document.getElementById('event_year').value;
+
+        // Send data to the backend
+        fetch('/add_event', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: eventName,
+                day: eventDay,
+                month: eventMonth,
+                year: eventYear
+            })
+        }).then(response => response.json())
+          .then(data => {
+              alert('Event Added: ' + data.message);
+          }).catch(error => {
+              console.error('Error:', error);
+          });
+    }
+</script>
+
+</body>
+</html>
