@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+    <title>Calendar App</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Calendar</h1>
+        <div id="calendar-controls">
+            <select id="month-select"></select>
+            <select id="year-select"></select>
+        </div>
+        <div id="calendar"></div>
+        <div id="event-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-modal">&times;</span>
+                <h2>Add Event</h2>
+                <input type="text" id="event-input" placeholder="Event name" required>
+                <button id="save-event">Save Event</button>
+                <div id="event-list" class="event-list"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
