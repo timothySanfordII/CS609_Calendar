@@ -3,11 +3,15 @@ from datetime import datetime
 from database import setup_database, get_events_for_month
 from navigation import prev_month, next_month, get_calendar
 from events import add_event_logic, edit_event_logic, delete_event_logic
+from apiholidays import get_holidays_for_month
+
 
 # Function to display calendar
 def show_calendar():
     global current_year, current_month
     cal = get_calendar(current_year, current_month)
+    #adding the api call here for the holidays
+    holidays = get_holidays_for_month(current_year, current_month)
     calendar_display.delete(1.0, "end")
     calendar_display.insert("end", cal)
     show_events()
@@ -40,11 +44,33 @@ def go_to_month():
 
 # Display events for the current month
 def show_events():
-    global current_year, current_month
+    global current_year, current_month, offset
+
+    # Clear the event list
     event_list.delete(0, END)
+
+    # Fetch events for the current month
     month_events = get_events_for_month(current_year, current_month)
-    for event in month_events:
-        event_list.insert(END, f"{event[1]}: {event[2]}")
+
+    # Fetch holidays for the current month
+    holidays = get_holidays_for_month(current_year, current_month)
+
+    # Add holidays to the event list
+    if holidays:
+        #this will be important for the editing of events
+        offset = 3
+        event_list.insert(END, "Holidays:")
+        for holiday in holidays:
+            offset+=1
+            event_list.insert(END, f"{holiday['date']}: {holiday['name']}")
+        event_list.insert(END, "")  # Add a blank line for separation
+
+    # Add user events to the event list
+    if month_events:
+        event_list.insert(END, "Events:")
+        for event in month_events:
+            event_list.insert(END, f"{event[1]}: {event[2]}")  # Format: Date: Event Description
+
 
 # Add a new event
 def add_event():
@@ -80,8 +106,7 @@ def edit_event():
     selected_index = event_list.curselection()
     if not selected_index:
         return  # No item selected
-
-    event_id, event_date, event_description = get_events_for_month(current_year, current_month)[selected_index[0]]
+    event_id, event_date, event_description = get_events_for_month(current_year, current_month)[selected_index[0]-offset]
 
     def save_edited_event():
         new_date = event_date_entry.get()
@@ -119,7 +144,7 @@ def delete_event():
     if not selected_index:
         return  # No item selected
 
-    event_id = get_events_for_month(current_year, current_month)[selected_index[0]][0]
+    event_id = get_events_for_month(current_year, current_month)[selected_index[0]-offset][0]
     delete_event_logic(event_id)
     show_events()
 
