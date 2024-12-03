@@ -19,8 +19,8 @@ def get_holidays_for_month(year, month):
     year_str = str(year)
 
     # Check if holidays data for this month is already fetched
-    if f"{year_str}-{month_str}" in events:
-        return events[f"{year_str}-{month_str}"]
+    if f"{year_str}-{month_str}" in holiday_data:
+        return holiday_data[f"{year_str}-{month_str}"]
 
     try:
         # Request holiday data from the API
@@ -36,12 +36,7 @@ def get_holidays_for_month(year, month):
         
         # Store holidays data in dictionary by year-month key
         holidays_list = [holiday['name'] for holiday in holidays]
-        events[f"{year_str}-{month_str}"] = holidays_list
-
-        # Add holidays to the global events dictionary to display them on the calendar
-        for holiday in holidays_list:
-            event_date = f"{year_str}-{month_str}"
-            events.setdefault(event_date, []).append(holiday)
+        holiday_data[f"{year_str}-{month_str}"] = holidays_list
 
         return holidays_list
     except requests.RequestException as e:
@@ -67,14 +62,16 @@ def show_calendar(year, month):
             if day == 0:
                 day_text = ""
                 event_text = ""
+                holiday_text = ""
             else:
                 day_text = str(day)
                 event_date = f"{year}-{month:02}-{day:02}"
-                # Combine user events and holidays
                 event_text = "\n".join(events.get(event_date, []))  # Join all events for the day
-            
+                # Check if the current day is a holiday
+                holiday_text = "\n".join([holiday for holiday in holidays if f"{year}-{month:02}-{day:02}" in holiday])
+
             # Label for each day, showing the day and any events
-            lbl = tk.Label(calendar_frame, text=f"{day_text}\n{event_text}", font=("Arial", 10), 
+            lbl = tk.Label(calendar_frame, text=f"{day_text}\n{event_text}\n{holiday_text}", font=("Arial", 10), 
                            borderwidth=1, relief="solid", justify="left")
             lbl.grid(row=week_num + 1, column=day_num, sticky="nsew")
             # Bind left-click to add events
